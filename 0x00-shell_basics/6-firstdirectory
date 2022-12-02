@@ -1,2 +1,2 @@
 #!/bin/bash
-mkdir -p /tmp/ 6-firstdirectory
+mkdir -m 755 /tmp/my_first_directory
