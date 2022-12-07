@@ -1,2 +1,2 @@
 #!/bin/bash
-sed -n 'p;n' hello
+awk 'NR % 2 == 1' filename
