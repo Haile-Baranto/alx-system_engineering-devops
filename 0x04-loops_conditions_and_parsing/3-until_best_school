@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# prints "Best School" using until 10 times to stdio
+
+index=1
+until [ $index -gt 10 ]
+do
+	echo "Best School"
+	index=$((index + 1))
+done
