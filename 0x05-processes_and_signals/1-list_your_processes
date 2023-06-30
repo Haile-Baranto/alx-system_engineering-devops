@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# This script displays a list of currently running processes.
+
+# Header
+printf "%-10s %-10s %-4s %-5s %-6s %-4s %-7s %-5s %-6s %s\n" "USER" "PID" "%CPU" "%MEM" "VSZ" "RSS" "TTY" "STAT" "START" "COMMAND"
+
+# Process list
+ps axo user,pid,pcpu,pmem,vsz,rss,tty,stat,start_time,time,comm --forest | sed 1d
