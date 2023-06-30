@@ -31,32 +31,33 @@ int infinite_while(void)
  */
 int main(void)
 {
-	pid_t pid;
-	int count;
+	pid_t child_pid;
+	int zombie_count;
 
-	// Create five zombie processes
-	for (count = 0; count < 5; count++)
+	/* Create five zombie processes */
+	for (zombie_count = 0; zombie_count < 5; zombie_count++)
 	{
-		pid = fork();
-		if (pid > 0)
+		child_pid = fork();
+		if (child_pid > 0)
 		{
-			// Parent process
-			printf("Zombie process created, PID: %d\n", pid);
+			/* Parent process */
+			printf("Zombie process created, PID: %d\n", child_pid);
+			sleep(1);
 		}
-		else if (pid == 0)
+		else if (child_pid == 0)
 		{
-			// Child process
+			/* Child process */
 			exit(0);
 		}
 		else
 		{
-			// Fork failed
+			/* Fork failed */
 			perror("fork");
 			exit(EXIT_FAILURE);
 		}
 	}
 
-	// Keep the program running
+	/* Keep the program running */
 	infinite_while();
 
 	return (0);
