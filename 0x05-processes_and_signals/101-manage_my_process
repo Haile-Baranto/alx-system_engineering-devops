@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# manage_my_process.sh: Bash script to manage the manage_my_process daemon.
+# This script provides options to start, stop, and restart the manage_my_process daemon.
+# Usage: ./101-manage_my_process {start|stop|restart}
+
+case $1 in
+    "start")
+        # Start manage_my_process
+        if [ -f "/var/run/my_process.pid" ]; then
+            echo "manage_my_process is already running"
+        else
+            ./manage_my_process &
+            echo "$!" > /var/run/my_process.pid
+            echo "manage_my_process started"
+        fi
+        ;;
+    "stop")
+        # Stop manage_my_process
+        if [ -f "/var/run/my_process.pid" ]; then
+            pid=$(cat /var/run/my_process.pid)
+            kill "$pid"
+            rm /var/run/my_process.pid
+            echo "manage_my_process stopped"
+        else
+            echo "manage_my_process is not running"
+        fi
+        ;;
+    "restart")
+        # Restart manage_my_process
+        if [ -f "/var/run/my_process.pid" ]; then
+            pid=$(cat /var/run/my_process.pid)
+            kill "$pid"
+            rm /var/run/my_process.pid
+        fi
+        ./manage_my_process &
+        echo "$!" > /var/run/my_process.pid
+        echo "manage_my_process restarted"
+        ;;
+    *)
+        # Invalid argument or no argument provided
+        echo "Usage: ./101-manage_my_process {start|stop|restart}"
+        ;;
+esac
