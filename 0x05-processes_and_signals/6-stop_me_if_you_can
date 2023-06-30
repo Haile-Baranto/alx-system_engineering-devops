@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Script to stop the 4-to_infinity_and_beyond process
+
+# Stop the 4-to_infinity_and_beyond process using pkill
+pkill -f 4-to_infinity_and_beyond
