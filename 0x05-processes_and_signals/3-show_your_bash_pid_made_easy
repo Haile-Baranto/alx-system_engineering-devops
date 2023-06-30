@@ -1,13 +1,4 @@
 #!/usr/bin/env bash
-
 # Use pgrep to find process IDs of processes with "bash" in their name
-pids=$(pgrep -f bash)
 
-# Iterate over the process IDs
-for pid in $pids; do
-  # Retrieve the process name using the /proc filesystem
-  process_name=$(tr -d '\0' </proc/"$pid"/comm)
-
-  # Display the PID and process name
-  echo "$pid $process_name"
-done
+pgrep bash -l
