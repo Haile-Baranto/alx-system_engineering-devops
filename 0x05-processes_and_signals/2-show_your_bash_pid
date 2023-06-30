@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2009
+
+# Get the PID of the current Bash process
+current_pid=$$
+
+# Display lines containing the word "bash" excluding the current process
+ps aux | grep -w bash | grep -v grep | grep -v "$current_pid"
