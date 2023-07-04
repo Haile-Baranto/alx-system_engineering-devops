@@ -1,5 +1,3 @@
 #!/usr/bin/env ruby
-input = ARGV[0]
-matches = input.scan(/hb(t{2,})n/)
-puts matches.join("\n")
+puts ARGV[0].scan(/hbt{2,5}n/).join
 
