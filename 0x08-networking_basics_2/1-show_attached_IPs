@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Description: This script displays all active IPv4 IPs on
+# the machine it is executed on.
+
+# Get the IPv4 addresses from ifconfig
+ipv4_addresses=$(ifconfig | grep -Eo "inet (addr:)?([0-9]*\.){3}[0-9]*" | awk '{print $2}')
+
+# Display the IPv4 addresses
+for address in $ipv4_addresses; do
+    echo "$address"
+done
