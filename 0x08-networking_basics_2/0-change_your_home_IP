@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Description: This script configures an Ubuntu server by
+# updating the hosts file to meet specific requirements.
+#
+# Requirements:
+#  - Update localhost to resolve to 127.0.0.2
+#  - Update facebook.com to resolve to 8.8.8.8
+
+# Update the hosts file
+sudo sed -i '/localhost/d' /etc/hosts
+sudo bash -c 'echo "127.0.0.2 localhost" >> /etc/hosts'
+
+# Update DNS resolution for facebook.com
+sudo sed -i '/facebook.com/d' /etc/hosts
+sudo bash -c 'echo "8.8.8.8 facebook.com" >> /etc/hosts'
