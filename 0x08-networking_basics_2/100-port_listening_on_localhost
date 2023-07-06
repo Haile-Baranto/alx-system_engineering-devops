@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# This script listens on port 98 on localhost.
+# It can be used for testing socket connections and debugging
+# network-related issues.
+
+
+# Listen on port 98 using netcat
+nc -l localhost 98
