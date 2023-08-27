@@ -1,0 +1,5 @@
+#  SSH configuration file to connect to server using private key ~/.ssh/school
+# but not using password
+Host *
+    passwordAuthentication no
+    IdentityFile ~/.ssh/school
