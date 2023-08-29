@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Configures Nginx to redirect /redirect_me with a 301 Moved Permanently
+
+if ! [ -x "$(command -v nginx)" ]; then
+    echo "Nginx is not installed. Please install Nginx first."
+    exit 1
+fi
+
+# Add redirection configuration to the default Nginx site
+echo '
+server {
+    listen 80;
+    server_name _;
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+}' | sudo tee /etc/nginx/sites-available/default > /dev/null
+
+# Test Nginx configuration and reload
+sudo nginx -t && sudo service nginx reload
+
+echo "Nginx configured for redirection."
+
+exit 0
