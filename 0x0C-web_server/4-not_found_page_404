@@ -1,43 +1,26 @@
 #!/usr/bin/env bash
-# Configure Nginx server with custom 404 page
+# Install nginx on your web-01 server
 
-# Install Nginx package
-sudo apt-get -y update
-sudo apt-get -y install nginx
+# Update the package list
+apt-get update
 
-# Configure Nginx to listen on port 80 and set up custom 404 page
-sudo tee /etc/nginx/sites-available/default > /dev/null << EOF
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
-    server_name _;
+# Install Nginx
+apt-get install nginx -y
 
-    location / {
-        try_files \$uri \$uri/ =404;
-    }
+# Create a basic "Hello World!" index page
+echo "Hello World!" | sudo tee /var/www/html/index.html > /dev/null
 
-    error_page 404 /404.html;
-    location = /404.html {
-        internal;
-        root /var/www/html;
-    }
+# Add a URL rewrite rule to Nginx configuration
+nginx_config="/etc/nginx/sites-available/default"
+rewrite_rule="rewrite ^/redirect_me https://www.w3schools.com/;"
+sed -i "46i $rewrite_rule" "$nginx_config"
 
-    location /redirect_me {
-        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-    }
-}
-EOF
+# Create a custom 404 error page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/custom_404.html > /dev/null
 
-# Enable the default site
-sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+# Configure Nginx to use the custom 404 page
+error_page_config="error_page 404 /custom_404.html;"
+sed -i "46i $error_page_config" "$nginx_config"
 
-# Create index.html with "Hello World!" content
-echo 'Hello World!' | sudo tee /var/www/html/index.html
-
-# Create custom 404 page
-echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
-
-# Restart Nginx service without using systemctl
-sudo service nginx restart
+# Restart Nginx to apply the changes
+service nginx restart
