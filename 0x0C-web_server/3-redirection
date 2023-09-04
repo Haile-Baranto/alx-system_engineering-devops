@@ -1,24 +1,28 @@
 #!/usr/bin/env bash
-# Configures Nginx to redirect /redirect_me with a 301 Moved Permanently
+# Check if the script is running with root privileges
 
-if ! [ -x "$(command -v nginx)" ]; then
-    echo "Nginx is not installed. Please install Nginx first."
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script as root."
     exit 1
 fi
 
-# Add redirection configuration to the default Nginx site
-echo '
-server {
-    listen 80;
-    server_name _;
-    location /redirect_me {
-        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-    }
-}' | sudo tee /etc/nginx/sites-available/default > /dev/null
+# Update package list and install Nginx
+apt-get update -y
+apt-get install nginx -y
 
-# Test Nginx configuration and reload
-sudo nginx -t && sudo service nginx reload
+# Allow Nginx through the firewall
+ufw allow 'Nginx HTTP'
 
-echo "Nginx configured for redirection."
+# Create a simple index.html page
+echo "Hello World" | tee /var/www/html/index
 
+# Add a rewrite rule for /redirect_me to Nginx configuration
+nginx_config="/etc/nginx/sites-available/default"
+rewrite_rule="rewrite ^/redirect_me https://www.w3schools.com/ permanent;"
+sed -i "/listen 80 default_server/a $rewrite_rule" "$nginx_config"
+
+# Restart Nginx to apply the changes
+service nginx restart
+
+echo "Nginx configured to redirect /redirect_me."
 exit 0
