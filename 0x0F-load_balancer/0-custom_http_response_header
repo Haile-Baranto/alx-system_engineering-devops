@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# The script install Nginx, and configure for custom redirect and not found pages
+
+# Check if the script is running with root privileges
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script as root."
+    exit 1
+fi
+
+# Update package list
+apt-get update -y
+
+# Install Nginx
+apt-get install nginx -y
+
+# Create a simple "Hello World" index page
+echo "Hello World" | tee /var/www/html/index.html > /dev/null
+
+# Add a URL rewrite rule for /redirect_me to Nginx configuration
+nginx_config="/etc/nginx/sites-available/default"
+rewrite_rule="rewrite ^/redirect_me https://www.w3schools.com/ permanent;"
+sed -i "/listen 80 default_server/a $rewrite_rule" "$nginx_config"
+
+# Create a custom 404 error page
+echo "Ceci n'est pas une page" | tee /var/www/html/404.html > /dev/null
+
+# Configure Nginx to use the custom 404 page and add the custom header
+nginx_config_content=$(cat <<EOF
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    add_header X-Served-By \$HOSTNAME;
+    root   /var/www/html;
+    index  index.html index.htm;
+
+    location /redirect_me {
+        return 301 https://www.w3schools.com/;
+    }
+
+    error_page 404 /404.html;
+    location /404 {
+      root /var/www/html;
+      internal;
+    }
+}
+EOF
+)
+
+echo "$nginx_config_content" > "$nginx_config"
+
+# Restart Nginx to apply the changes
+service nginx restart
