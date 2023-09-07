@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Debugging Nginx not working at port 80
+
+# Check if Nginx is already installed
+if ! command -v nginx &>/dev/null; then
+    # Install Nginx if not already installed
+    apt-get update
+    apt-get install -y nginx
+fi
+
+# Check if Nginx is listening on port 80 for all active IPv4 IPs
+if ! ss -tuln | grep -q ':80'; then
+    # If not listening, configure Nginx to listen on port 80
+    echo "Configuring Nginx to listen on port 80..."
+
+    # Create or modify the Nginx configuration to listen on port 80
+    cat <<EOF > /etc/nginx/sites-available/my_site
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
+}
+EOF
+
+    # Create a symbolic link only if it doesn't exist
+    if [ ! -e /etc/nginx/sites-enabled/my_site ]; then
+        ln -s /etc/nginx/sites-available/my_site /etc/nginx/sites-enabled/
+    fi
+
+    # Remove the default symbolic link if it exists
+    rm -f /etc/nginx/sites-enabled/default
+
+    # Reload Nginx to apply the new configuration
+    nginx -s reload
+
+    # Check if Nginx is now listening on port 80
+    if ss -tuln | grep -q ':80'; then
+        echo "Nginx is now listening on port 80."
+    else
+        echo "Nginx could not be configured to listen on port 80. Check for errors in the Nginx configuration."
+    fi
+else
+    # Nginx is already listening on port 80
+    echo "Nginx is already listening on port 80."
+fi
