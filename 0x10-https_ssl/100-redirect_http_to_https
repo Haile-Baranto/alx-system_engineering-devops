@@ -10,13 +10,23 @@ global
 
 defaults
     log global
-    mode http
-    option httplog
-    option dontlognull
+    mode    http
+    option  httplog
+    option  dontlognull
     timeout connect 5000
     timeout client  50000
     timeout server  50000
 
+    # Define error pages for specific HTTP error codes
+    errorfile 400 /etc/haproxy/errors/400.http
+    errorfile 403 /etc/haproxy/errors/403.http
+    errorfile 408 /etc/haproxy/errors/408.http
+    errorfile 500 /etc/haproxy/errors/500.http
+    errorfile 502 /etc/haproxy/errors/502.http
+    errorfile 503 /etc/haproxy/errors/503.http
+    errorfile 504 /etc/haproxy/errors/504.http
+
+# Frontend for HTTP traffic on port 80
 frontend http_front
     bind *:80
     stats uri /haproxy?stats
@@ -26,18 +36,21 @@ frontend http_front
     acl is_http_request hdr_beg(host) -i www.fullstackexpert.tech
     redirect scheme https if is_http_request
 
+# Backend for HTTP traffic on port 80
 backend http_back
     balance roundrobin
     server web-01 202966-web-01:80 check
     server web-02 202966-web-02:80 check
 
+# Frontend for HTTPS traffic on port 443 (SSL termination)
 frontend https_front
-    bind *:443 ssl crt /etc/letsencrypt/live/www.fullstackexpert.tech/fullchain.pem
+    bind *:443 ssl crt /etc/ssl/fullstackexpert.tech.pem
     mode http
     option forwardfor
     reqadd X-Forwarded-Proto:\ https
     default_backend https_back
 
+# Backend for HTTPS traffic on port 443
 backend https_back
     mode http
     server web-server-1 54.234.75.145:443 check
