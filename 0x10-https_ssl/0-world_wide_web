@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# The script display information about subdomains.
+# The bash script accepts two arguements domain and subdomain[optional]
+# Ouput: "The subdomain [SUB_DOMAIN] is a [RECORD_TYPE] record and points to [DESTINATION]"
+# when both specified but if only domain is specified 'www, lb-01, web-01 and web-02' respectively 
+
+# Function to display subdomain information
+display_info() {
+    local subdomain="$1"
+    local domain="$2"
+    local record_type="$3"
+    local destination="$4"
+    echo "The subdomain $subdomain is a $record_type record and points to $destination"
+}
+
+# Main script logic
+domain="$1"
+subdomain="$2"
+
+# Default subdomains to audit
+subdomains=("www" "lb-01" "web-01" "web-02")
+
+# If a specific subdomain is provided, audit only that subdomain
+if [ -n "$subdomain" ]; then
+    subdomains=("$subdomain")
+fi
+
+# Loop through and audit subdomains
+for sub in "${subdomains[@]}"; do
+    result=$(dig +short "$sub.$domain")
+    if [ -n "$result" ]; then
+        record_type="A"
+        destination="$result"
+        display_info "$sub" "$domain" "$record_type" "$destination"
+    else
+        echo "No DNS record found for $sub.$domain"
+    fi
+done
