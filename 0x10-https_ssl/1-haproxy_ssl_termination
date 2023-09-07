@@ -17,15 +17,20 @@ defaults
     timeout client  50000
     timeout server  50000
 
+    # Define error pages for specific HTTP error codes
+    errorfile 400 /etc/haproxy/errors/400.http
+    errorfile 403 /etc/haproxy/errors/403.http
+    errorfile 408 /etc/haproxy/errors/408.http
+    errorfile 500 /etc/haproxy/errors/500.http
+    errorfile 502 /etc/haproxy/errors/502.http
+    errorfile 503 /etc/haproxy/errors/503.http
+    errorfile 504 /etc/haproxy/errors/504.http
+
 # Frontend for HTTP traffic on port 80
 frontend http_front
     bind *:80
     stats uri /haproxy?stats
     default_backend http_back
-
-    # Redirect HTTP to HTTPS for fullstackexpert.tech
-    acl is_fullstackexpert_http hdr_beg(host) -i www.fullstackexpert.tech
-    redirect scheme https if is_fullstackexpert_http
 
 # Backend for HTTP traffic on port 80
 backend http_back
