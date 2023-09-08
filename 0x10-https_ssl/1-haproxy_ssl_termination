@@ -39,7 +39,7 @@ frontend http-frontend
         default_backend  web-backend
 
 frontend  https-frontend
-        bind *:443 ssl crt /etc/ssl/domain.pem
+        bind *:443 ssl crt /etc/ssl/www.fullstackexpert.tech/fullchain_privkey.pem
         http-request set-header X-Forwarded-Proto https
         default_backend web-backend
 
