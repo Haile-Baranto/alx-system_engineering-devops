@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# The script accepts one arguement from command line and run whoami command using that arguement
+# Check if a username is provided as an argument
+if [ $# -eq 0 ]; then
+  # No argument provided, default to root user
+  su -c "whoami"
+else
+  # Argument provided, switch to the specified user
+  username=$1
+  su -c "whoami" "$username"
+fi
