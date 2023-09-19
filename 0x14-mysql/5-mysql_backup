@@ -1,35 +1,34 @@
 #!/usr/bin/env bash
-# This script generates a MySQL dump, compresses it, and stores it with the specified naming format.
+# This script performs a backup of all databases, compresses the backup,
+# and names the compressed file with the current date.
 
-# Check for the password argument
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <mysql_password>"
-    exit 1
+# Set your MySQL root password as the first argument when running the script.
+# Example usage: ./backup.sh YourPassword
+
+# Capture the root password from the command line argument
+mysql_root_password="$1"
+
+# Ensure the password is provided
+if [ -z "$mysql_root_password" ]; then
+  echo "Usage: $0 <MySQL Root Password>"
+  exit 1
 fi
 
-# MySQL database credentials
-MYSQL_USER="root"
-MYSQL_PASSWORD="$1"
+# Perform a MySQL dump of all databases to a file named backup.sql
+mysqldump --all-databases -u root --password="$mysql_root_password" > backup.sql
 
-# Get the current date in the desired format (day-month-year)
-DATE=$(date +%d-%m-%Y)
+# Get the current date components for naming the backup file
+day=$(date +"%d")
+month=$(date +"%m")
+year=$(date +"%Y")
 
-# Output directory for backups (change this to your desired directory)
-BACKUP_DIR="/path/to/backup/directory"
+# Define the name of the compressed backup file using the date
+file_name="$day-$month-$year.tar.gz"
 
-# Ensure the backup directory exists
-mkdir -p "$BACKUP_DIR"
+# Compress the backup file using tar
+tar -czvf "$file_name" backup.sql
 
-# MySQL dump command to backup all databases
-if mysqldump --all-databases -u "$MYSQL_USER" --password="$MYSQL_PASSWORD" > "$BACKUP_DIR/backup.sql"; then
-    # Compress the MySQL dump file to a tar.gz archive
-    if tar -czvf "$BACKUP_DIR/$DATE.tar.gz" -C "$BACKUP_DIR" backup.sql; then
-        echo "Backup completed successfully: $BACKUP_DIR/$DATE.tar.gz"
-    else
-        echo "Compression failed."
-        exit 1
-    fi
-else
-    echo "MySQL dump failed. Check your MySQL credentials."
-    exit 1
-fi
+# Clean up the temporary backup.sql file
+rm backup.sql
+
+echo "Backup completed and saved as $file_name"
