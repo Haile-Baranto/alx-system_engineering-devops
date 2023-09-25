@@ -6,9 +6,9 @@ a given employee using the JSONPlaceholder API to a CSV file.
 Usage: python script.py EMPLOYEE_ID
 """
 
+import csv
 import requests
 import sys
-import csv
 
 
 def get_employee_todo_progress(employee_id):
@@ -23,9 +23,7 @@ def get_employee_todo_progress(employee_id):
         None
     """
     base_url = "https://jsonplaceholder.typicode.com/"
-    api_url = (
-        f"{base_url}todos?userId={employee_id}"
-    )  # Using parentheses for line continuation
+    api_url = f"{base_url}todos?userId={employee_id}"
 
     try:
         response = requests.get(api_url)
@@ -37,10 +35,10 @@ def get_employee_todo_progress(employee_id):
             with open(csv_file_name, mode='w', newline='') as csv_file:
                 csv_writer = csv.writer(
                     csv_file, quoting=csv.QUOTE_MINIMAL
-                )  # Line continuation for readability
+                )
 
                 for task in todo_list:
-                    csv_writer.writerow([employee_id, employee_name,
+                    csv_writer.writerow([employee_id, employee_name.split()[0],
                                          task["completed"], task["title"]])
 
             print(f"Data exported to {csv_file_name}")
@@ -61,20 +59,16 @@ def get_employee_name(employee_id):
     Returns:
         str: The employee's name or "Unknown" if not found.
     """
-    # API endpoint to retrieve user information
     user_api_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
     try:
-        # Make an HTTP GET request to retrieve user information
         response = requests.get(user_api_url)
-
-        # Check if the request was successful (status code 200)
         if response.status_code == 200:
             user_info = response.json()
-            return user_info["name"]
+            return user_info["name"].split()[0]  # Use only the first name
         else:
             return "Unknown"
     except requests.exceptions.RequestException:
-        return "Unknown"  # Return "Unknown" on error
+        return "Unknown"
 
 
 if __name__ == "__main__":
