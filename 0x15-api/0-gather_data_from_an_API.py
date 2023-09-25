@@ -41,10 +41,10 @@ def get_employee_todo_progress(employee_id):
             employee_name = get_employee_name(employee_id)
 
             # Display progress information
-            print("Employee {} is done with tasks ({}/{})".format(
+            print("Employee {} is done with tasks({}/{}):".format(
                 employee_name, len(completed_tasks), total_tasks))
             for task in completed_tasks:
-                print(f"\t{task['title']}")
+                print(f"\t {task['title']}")
         else:
             print("Failed to retrieve TODO list progress.")
     except requests.exceptions.RequestException as e:
