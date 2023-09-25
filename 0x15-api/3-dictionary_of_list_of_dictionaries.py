@@ -6,9 +6,11 @@ Exports to-do list information of all employees to JSON format.
 import json
 import requests
 
+
 def fetch_todos_for_user(user_id):
     url = "https://jsonplaceholder.typicode.com/"
     return requests.get(url + "todos", params={"userId": user_id}).json()
+
 
 if __name__ == "__main__":
     url = "https://jsonplaceholder.typicode.com/"

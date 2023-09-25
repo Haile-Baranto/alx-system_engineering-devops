@@ -21,5 +21,5 @@ if __name__ == "__main__":
     # Create a JSON file and write the data
     with open("{}.json".format(user_id), "w") as jsonfile:
         json.dump({user_id: [{"task": t.get("title"),
-                             "completed": t.get("completed"),
-                             "username": username} for t in todos]}, jsonfile)
+                              "completed": t.get("completed"),
+                              "username": username} for t in todos]}, jsonfile)
