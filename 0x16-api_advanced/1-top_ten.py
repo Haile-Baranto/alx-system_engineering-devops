@@ -18,17 +18,16 @@ def top_ten(subreddit):
         The titles of the first 10 hot posts, or None if the subreddit is
         invalid or an error occurs.
     """
-    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=10"
     headers = {"User-Agent": "My Reddit Scraper (by /u/YourRedditUsername)"}
 
     try:
         response = requests.get(url, headers=headers)
         data = response.json()
         titles = [post["data"]["title"] for post in
-                  data.get("data", {}).get("children", [])[:10]]
+                  data.get("data", {}).get("children", [])]
 
         # Print the titles
-        for title in titles:
-            print(f"{title}")
+        print(*titles, sep='\n')
     except Exception as e:
         print(None)
